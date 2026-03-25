@@ -62,15 +62,16 @@ elif st.session_state.step == 4:
         go_to_step(5)
 
 # --- BƯỚC 5: KẾT QUẢ ---
-KHO_CAU_HOI = [
-    {"h": "Toán: $x^2 - 16 = 0$. Tìm x dương?", "d": "4", "p": 20},
-    {"h": "Vật Lý: Đơn vị của lực (F) là gì?", "d": "Newton", "p": 20},
-    {"h": "Tiếng Anh: 'Apple' tiếng Việt là gì?", "d": "Táo", "p": 10},
-    {"h": "Toán: Căn bậc hai của 81 là mấy?", "d": "9", "p": 20},
-    {"h": "Vật Lý: Công thức tính Vận tốc v = s / ?", "d": "t", "p": 30}
-]
-
 elif st.session_state.step == 5:
+    # Đẩy danh sách câu hỏi vào bên trong thụt lề của elif
+    KHO_CAU_HOI = [
+        {"h": "Toán: $x^2 - 16 = 0$. Tìm x dương?", "d": "4", "p": 20},
+        {"h": "Vật Lý: Đơn vị của lực (F) là gì?", "d": "Newton", "p": 20},
+        {"h": "Tiếng Anh: 'Apple' tiếng Việt là gì?", "d": "Táo", "p": 10},
+        {"h": "Toán: Căn bậc hai của 81 là mấy?", "d": "9", "p": 20},
+        {"h": "Vật Lý: Công thức tính Vận tốc v = s / ?", "d": "t", "p": 30}
+    ]
+    
     st.header("🚀 Đấu Trường Leo Top: 5 Hiệp Var Khốc Liệt")
 
     # Khởi tạo điểm và danh sách câu hỏi nếu mới vào bước 5
