@@ -44,6 +44,22 @@ elif st.session_state.step == 3:
 elif st.session_state.step == 4:
     st.info("Đang xử lý...")
     progress_bar = st.progress(0)
+
+# Ví dụ logic xử lý mức độ
+if muc_do == "Boy phố":
+    kich_ban = [
+        "Hiệp 1: Vít ga đầu ngõ - Jet jet!",
+        "Hiệp 2: Đảo cánh phượng giữa phố đêm",
+        "Hiệp 3: Var cực căng với các 'idol' khác",
+        "Hiệp 4: Tăng tốc về đích, bỏ xa đối thủ",
+        "Hiệp 5: Chốt kèo, nhận danh hiệu Trùm Boy Phố"
+    ]
+elif muc_do == "Phong cách Premium":
+    kich_ban = [
+        "Hiệp 1: Xuất hiện thanh lịch, lên đồ cực bảnh",
+        "Hiệp 2: Di chuyển mượt mà trên các cung đường đẹp",
+        # ... tiếp tục cho các hiệp khác
+    ]
     
     # Giả lập AI đang phân tích
     for percent_complete in range(100):
