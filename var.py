@@ -1,98 +1,88 @@
-import streamlit as st
-import time
-import random
-
 #
+import streamlit as st
+import random
+import time
 
-# Thiết lập cấu hình trang
-st.set_page_config(page_title="Hệ Thống Var Premium", page_icon="⚡")
+# --- CẤU HÌNH HỆ THỐNG ---
+st.set_page_config(page_title="Hệ Thống Var Leo Top", page_icon="⚡")
 
-# Khởi tạo session state để quản lý các bước
+# Kho câu hỏi dùng chung cho Bước 5
+KHO_CAU_HOI = [
+    {"h": "Toán: $x^2 - 16 = 0$. Tìm x dương?", "d": "4", "p": 20},
+    {"h": "Vật Lý: Đơn vị của lực (F) là gì?", "d": "Newton", "p": 20},
+    {"h": "Tiếng Anh: 'Apple' tiếng Việt là gì?", "d": "Táo", "p": 10},
+    {"h": "Toán: Căn bậc hai của 81 là mấy?", "d": "9", "p": 20},
+    {"h": "Vật Lý: Công thức tính Vận tốc v = s / ?", "d": "t", "p": 30}
+]
+
+# Khởi tạo Session State
 if 'step' not in st.session_state:
     st.session_state.step = 1
-if 'muc_do' not in st.session_state:
-    st.session_state.muc_do = ""
+if 'tong_diem' not in st.session_state:
+    st.session_state.tong_diem = 0
+if 'hiep_hien_tai' not in st.session_state:
+    st.session_state.hiep_hien_tai = 1
+if 'cau_hien_tai' not in st.session_state:
+    st.session_state.cau_hien_tai = random.choice(KHO_CAU_HOI)
+if 'da_tra_loi' not in st.session_state:
+    st.session_state.da_tra_loi = False
 
-# --- Bước 6: Hàm xử lý lỗi điều hướng (Logic check) ---
 def go_to_step(next_step):
     st.session_state.step = next_step
+    st.rerun()
 
-# Giao diện chính
+# --- GIAO DIỆN CHÍNH ---
 st.title("🔥 Hệ Thống Var - Team Gugugaga")
 
-# --- BƯỚC 1: CHÀO MỪNG ---
+# BƯỚC 1: CHÀO MỪNG
 if st.session_state.step == 1:
     st.subheader("Chào mừng: Chan bố mày đi")
-    if st.button("Sẵn sàng var"):
+    if st.button("Sẵn sàng var", key="start_1"):
         go_to_step(2)
 
-# --- BƯỚC 2: CHỦ ĐỀ ---
+# BƯỚC 2: CHỦ ĐỀ
 elif st.session_state.step == 2:
     st.subheader("Chủ đề: Những cách leo top trong màn đêm của những boy phố, jet jet")
-    if st.button("Sẵn sàng leo top"):
+    if st.button("Sẵn sàng leo top", key="start_2"):
         go_to_step(3)
 
-# --- BƯỚC 3: CHỌN MỨC ĐỘ ---
+# BƯỚC 3: CHỌN MỨC ĐỘ
 elif st.session_state.step == 3:
     st.subheader("Chọn mức độ var")
-    muc_do = st.radio(
+    st.session_state.muc_do = st.radio(
         "Chọn phong cách của bạn:",
-        ["Vừa, nhẹ nhàng", "Phong cách Premium", "Boy phố"]
+        ["Vừa, nhẹ nhàng", "Phong cách Premium", "Boy phố"],
+        key="radio_level"
     )
-    if st.button("Xác nhận mức độ"):
-        st.session_state.muc_do = muc_do
+    if st.button("Xác nhận mức độ", key="start_3"):
         go_to_step(4)
 
-# --- BƯỚC 4: XỬ LÝ (AI) ---
+# BƯỚC 4: XỬ LÝ (AI)
 elif st.session_state.step == 4:
-    st.info("Đang xử lý...")
+    st.info("Đang xử lý hệ thống var...")
     progress_bar = st.progress(0)
-
-# Ví dụ logic xử lý mức độ
-#if muc_do == "Boy phố":
-  #  kich_ban = [
-   # 
-    # Giả lập AI đang phân tích
     for percent_complete in range(100):
-        time.sleep(0.02)
+        time.sleep(0.01)
         progress_bar.progress(percent_complete + 1)
-    
-    st.success(f"Đã phân tích xong phong cách: {st.session_state.muc_do}")
-    if st.button("Xem kết quả"):
+    st.success("Hệ thống đã sẵn sàng cho 5 hiệp leo top!")
+    if st.button("Tiến vào đấu trường", key="start_4"):
         go_to_step(5)
 
-# --- BƯỚC 5: KẾT QUẢ ---
+# BƯỚC 5: KẾT QUẢ & VAR
 elif st.session_state.step == 5:
-    # Đẩy danh sách câu hỏi vào bên trong thụt lề của elif
-    KHO_CAU_HOI = [
-        {"h": "Toán: $x^2 - 16 = 0$. Tìm x dương?", "d": "4", "p": 20},
-        {"h": "Vật Lý: Đơn vị của lực (F) là gì?", "d": "Newton", "p": 20},
-        {"h": "Tiếng Anh: 'Apple' tiếng Việt là gì?", "d": "Táo", "p": 10},
-        {"h": "Toán: Căn bậc hai của 81 là mấy?", "d": "9", "p": 20},
-        {"h": "Vật Lý: Công thức tính Vận tốc v = s / ?", "d": "t", "p": 30}
-    ]
-    
     st.header("🚀 Đấu Trường Leo Top: 5 Hiệp Var Khốc Liệt")
-
-    # Khởi tạo điểm và danh sách câu hỏi nếu mới vào bước 5
-    if 'tong_diem' not in st.session_state:
-        st.session_state.tong_diem = 0
-        st.session_state.hiep_hien_tai = 1
-        st.session_state.cau_hien_tai = random.choice(KHO_CAU_HOI)
-        st.session_state.da_tra_loi = False
-
+    
     vung_var = st.empty()
-
+    
     with vung_var.container():
         st.subheader(f"🔥 Hiệp {st.session_state.hiep_hien_tai}/5")
         st.markdown(f"**Thử thách:** {st.session_state.cau_hien_tai['h']}")
-        
         user_input = st.text_input("Nhập đáp án của bạn:", key=f"input_hiep_{st.session_state.hiep_hien_tai}")
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        if st.button("Bắt đầu var (Gửi)", key="btn_check"):
+        if st.button("Bắt đầu var (Gửi)", key=f"btn_check_{st.session_state.hiep_hien_tai}"):
             if not user_input:
                 st.warning("⚠️ Đừng múa máy, điền đáp án đi bạn ơi!")
             elif user_input.lower() == st.session_state.cau_hien_tai['d'].lower():
@@ -105,7 +95,7 @@ elif st.session_state.step == 5:
                 st.session_state.da_tra_loi = True
 
     with col3:
-        if st.button("Tiếp tục var (Hiệp tới)", key="btn_next"):
+        if st.button("Tiếp tục var", key=f"btn_next_{st.session_state.hiep_hien_tai}"):
             if st.session_state.hiep_hien_tai < 5:
                 st.session_state.hiep_hien_tai += 1
                 st.session_state.cau_hien_tai = random.choice(KHO_CAU_HOI)
@@ -121,22 +111,23 @@ elif st.session_state.step == 5:
             st.markdown("---")
             st.header(f"📊 Tổng điểm tích lũy: {tong} điểm")
 
-            # Phân hạng theo yêu cầu
             if tong >= 80:
                 st.error("💎 HẠNG: CHIẾN THẦN LEO TOP")
+                st.write("Đúng là boy phố học Toán, khét lẹt!")
             elif 50 <= tong < 80:
                 st.warning("⚔️ HẠNG: CHIẾN TƯỚNG LEO TOP")
+                st.write("Phong cách Premium, xử lý rất ổn định.")
             else:
                 st.info("🐢 HẠNG: NGÔ LEO TOP")
+                st.write("Cố gắng ở hiệp sau nhé!")
 
-            if st.button("Làm lại kèo mới"):
-                # Reset sạch sẽ session
+            if st.button("Làm lại kèo mới", key="btn_reset_game"):
                 for key in ['tong_diem', 'hiep_hien_tai', 'cau_hien_tai', 'da_tra_loi']:
                     del st.session_state[key]
-                st.session_state.step = 1
-                st.rerun()
-# --- Xử lý lỗi bước (Phòng trường hợp session bị trống) ---
+                go_to_step(1)
+
+# BƯỚC 6: XỬ LÝ LỖI ĐIỀU HƯỚNG
 if st.session_state.step not in [1, 2, 3, 4, 5]:
-    st.error("Có lỗi xảy ra trong quá trình chọn bước.")
-    if st.button("Quay lại trang chủ"):
+    st.error("Hệ thống gặp lỗi chọn bước!")
+    if st.button("Quay lại trang chủ", key="error_back"):
         go_to_step(1)
