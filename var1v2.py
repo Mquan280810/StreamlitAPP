@@ -51,6 +51,7 @@ elif st.session_state.step == 4:
     for i in range(100):
         time.sleep(0.01)
         bar.progress(i + 1)
+    st.success("Hệ thống đã sẵn sàng cho 5 hiệp leo top!")
     if st.button("Vào đấu trường", key="btn_s4"): go_to_step(5)
 
 # BƯỚC 5: KẾT QUẢ & RESET SẠCH
