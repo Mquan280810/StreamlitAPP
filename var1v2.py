@@ -4,11 +4,11 @@ import time
 
 # --- 1. DỮ LIỆU CÂU HỎI (Team Gugugaga) ---
 KHO_CAU_HOI = [
-    {"h": "Toán: $x^2 - 16 = 0$. Tìm x dương?", "d": "4", "p": 20},
-    {"h": "Vật Lý: Đơn vị của lực (F) là gì?", "d": "Newton", "p": 20},
-    {"h": "Tiếng Anh: 'Apple' tiếng Việt là gì?", "d": "Táo", "p": 10},
+    {"h": "Toán: $x^2 - 16 = 0$. Tìm x dương?", "d": "4, x=4, x = 4", "p": 20},
+    {"h": "Vật Lý: Đơn vị của lực (F) là gì?", "d": "Newton, N", "p": 20},
+    {"h": "Tiếng Anh: 'Apple' tiếng Việt là gì?", "d": "Táo, Qủa Táo, táo, Qủa táo, quả táo", "p": 10},
     {"h": "Toán: Căn bậc hai của 81 là mấy?", "d": "9", "p": 20},
-    {"h": "Vật Lý: Công thức tính Vận tốc v = s / ?", "d": "t", "p": 30}
+    {"h": "Vật Lý: Công thức tính Vận tốc v = s / ?", "d": "t, v=s/t, v = s / t", "p": 30}
 ]
 
 # --- 2. KHỞI TẠO SESSION STATE ---
