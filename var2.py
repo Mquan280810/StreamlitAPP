@@ -120,10 +120,10 @@ elif st.session_state.step == 5:
                 st.info("🐢 HẠNG: NGÔ LEO TOP")
             
             # --- YÊU CẦU: LÀM LẠI QUAY VỀ BƯỚC 3 ---
-            if st.button("Làm lại kèo mới", key="btn_redo"):
+            if st.button("Làm lại kèo mới", key="btn_step3"):
                 # Reset bộ nhớ hiệp đấu nhưng giữ nguyên session để nhảy bước
                 st.session_state.history_answers = {}
-                st.session_state.hiep_hien_tai = 3
+                st.session_state.hiep_hien_tai = 1
                 go_to_step(3)
 
 # BƯỚC 6: XỬ LÝ LỖI CHỌN
