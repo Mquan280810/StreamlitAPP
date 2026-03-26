@@ -69,62 +69,58 @@ elif st.session_state.step == 4:
 
 # BƯỚC 5: KẾT QUẢ & VAR
 elif st.session_state.step == 5:
-    st.header("🚀 Đấu Trường Leo Top: 5 Hiệp Var Khốc Liệt")
+    st.header("🚀 5 Hiệp Leo Top")
     
-    vung_var = st.empty()
-    
-    with vung_var.container():
-        st.subheader(f"🔥 Hiệp {st.session_state.hiep_hien_tai}/5")
-        st.markdown(f"**Thử thách:** {st.session_state.cau_hien_tai['h']}")
-        user_input = st.text_input("Nhập đáp án của bạn:", key=f"input_hiep_{st.session_state.hiep_hien_tai}")
+    # Khởi tạo trạng thái hiển thị kết quả nếu chưa có
+    if 'show_result' not in st.session_state:
+        st.session_state.show_result = False
 
-    col1, col2, col3, col4 = st.columns(4)
+    # Nếu chưa nhấn kết thúc, hiển thị bộ câu hỏi
+    if not st.session_state.show_result:
+        idx = st.session_state.hiep_hien_tai - 1
+        cau = KHO_CAU_HOI[idx]
+        st.subheader(f"Hiệp {st.session_state.hiep_hien_tai}/5")
+        st.write(f"Thử thách: {cau['h']}")
+        
+        ans_cu = st.session_state.history_answers.get(st.session_state.hiep_hien_tai, "")
+        user_in = st.text_input("Đáp án:", value=ans_cu, key=f"i_{st.session_state.hiep_hien_tai}")
+        st.session_state.history_answers[st.session_state.hiep_hien_tai] = user_in
 
-    with col1:
-        if st.button("Bắt đầu var (Gửi)", key=f"btn_check_{st.session_state.hiep_hien_tai}"):
-            if not user_input:
-                st.warning("⚠️ Đừng múa máy, điền đáp án đi bạn ơi!")
-            elif user_input.lower() == st.session_state.cau_hien_tai['d'].lower():
-                if not st.session_state.da_tra_loi:
-                    st.session_state.tong_diem += st.session_state.cau_hien_tai['p']
-                    st.session_state.da_tra_loi = True
-                st.success(f"✅ Quá gắt! +{st.session_state.cau_hien_tai['p']} điểm.")
-            else:
-                st.error(f"❌ Xòe rồi! Đáp án đúng là: {st.session_state.cau_hien_tai['d']}")
-                st.session_state.da_tra_loi = True
-
-    with col3:
-        if st.button("Tiếp tục var", key=f"btn_next_{st.session_state.hiep_hien_tai}"):
-            if st.session_state.hiep_hien_tai < 5:
-                st.session_state.hiep_hien_tai += 1
-                st.session_state.cau_hien_tai = random.choice(KHO_CAU_HOI)
-                st.session_state.da_tra_loi = False
+        c1, c2, c3 = st.columns([1, 1, 2])
+        with c1:
+            if st.button("⬅️ Trước", key="btn_p"):
+                if st.session_state.hiep_hien_tai > 1:
+                    st.session_state.hiep_hien_tai -= 1
+                    st.rerun()
+        with c2:
+            if st.button("Sau ➡️", key="btn_n"):
+                if st.session_state.hiep_hien_tai < 5:
+                    st.session_state.hiep_hien_tai += 1
+                    st.rerun()
+        with c3:
+            if st.button("🏁 Kết thúc var", key="btn_f"):
+                st.session_state.show_result = True
                 st.rerun()
-            else:
-                st.info("🏁 Đã hết 5 hiệp! Nhấn 'Kết thúc' để xem hạng.")
 
-    with col4:
-        if st.button("Kết thúc var", key="btn_finish_final"):
-            st.balloons()
-            tong = st.session_state.tong_diem
-            st.markdown("---")
-            st.header(f"📊 Tổng điểm tích lũy: {tong} điểm")
-
-            if tong >= 80:
-                st.error("💎 HẠNG: CHIẾN THẦN LEO TOP")
-                st.write("Đúng là boy phố, jet jet vượt trội, khét lẹt!")
-            elif 50 <= tong < 80:
-                st.warning("⚔️ HẠNG: CHIẾN TƯỚNG LEO TOP")
-                st.write("Phong cách Premium, xử lý rất ổn định.")
-            else:
-                st.info("🐢 HẠNG: NGỐ LEO TOP")
-                st.write("Cố gắng ở hiệp sau nhé!")
-
-            st.markdown("---")
-            # Nút này bây giờ nằm độc lập, bấm phát là clear sạch sẽ
-            if st.button("🔥 LÀM LẠI KÈO MỚI (VỀ BƯỚC 1)", key="redo_final"):
-                st.session_state.clear()
-                st.rerun()
+    # MÀN HÌNH HIỂN THỊ HẠNG (Sau khi đã bấm Kết thúc)
+    else:
+        st.balloons()
+        tong = 0
+        for i, c in enumerate(KHO_CAU_HOI):
+            if st.session_state.history_answers.get(i+1, "").strip().lower() == c['d'].lower():
+                tong += c['p']
+        
+        st.header(f"📊 Tổng kết: {tong} điểm")
+        
+        if tong >= 80: st.error("💎 HẠNG: CHIẾN THẦN LEO TOP")
+        elif tong >= 50: st.warning("⚔️ HẠNG: CHIẾN TƯỚNG LEO TOP")
+        else: st.info("🐢 HẠNG: NGÔ LEO TOP")
+        
+        st.markdown("---")
+        # Nút này bây giờ nằm độc lập, bấm phát là clear sạch sẽ
+        if st.button("🔥 LÀM LẠI KÈO MỚI (VỀ BƯỚC 1)", key="redo_final"):
+            st.session_state.clear()
+            st.rerun()
 
 # BƯỚC 6: XỬ LÝ LỖI ĐIỀU HƯỚNG
 if st.session_state.step not in [1, 2, 3, 4, 5]:
