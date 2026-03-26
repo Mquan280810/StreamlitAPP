@@ -102,3 +102,5 @@ elif st.session_state.step == 5:
             if st.button("Làm lại kèo mới (Về Bước 1)", key="redo_all_clean"):
                 st.session_state.clear() # Xóa sạch mọi dữ liệu
                 st.rerun() # Load lại trang về trạng thái ban đầu
+                if 'step' not in st.session_state:
+                    st.session_state.step = 1
