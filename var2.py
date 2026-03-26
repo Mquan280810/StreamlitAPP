@@ -119,12 +119,10 @@ elif st.session_state.step == 5:
             else:
                 st.info("🐢 HẠNG: NGÔ LEO TOP")
             
-            # --- YÊU CẦU: LÀM LẠI QUAY VỀ BƯỚC 3 ---
-            if st.button("Làm lại kèo mới", key="btn_step3"):
-                # Reset bộ nhớ hiệp đấu nhưng giữ nguyên session để nhảy bước
-                st.session_state.history_answers = {}
-                st.session_state.hiep_hien_tai = 1
-                go_to_step(3)
+            # NÚT RESET SẠCH VỀ BƯỚC 1
+            if st.button("Làm lại kèo mới (Reset sạch)", key="redo_all"):
+                st.session_state.clear()
+                st.rerun()
 
 # BƯỚC 6: XỬ LÝ LỖI CHỌN
 if st.session_state.step not in [1, 2, 3, 4, 5]:
