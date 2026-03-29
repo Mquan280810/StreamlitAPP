@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 
 # ==========================================
-# PHẦN 1: QUẢN LÝ DATABASE (Giữ nguyên & thêm hàm Update)
+# PHẦN 1: QUẢN LÝ DATABASE (SQLITE)
 # ==========================================
 def create_connection():
     return sqlite3.connect('saving_data.db')
@@ -25,7 +25,6 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# Hàm mới: Cập nhật số tiền tiết kiệm (Cộng dồn)
 def update_saving(username, amount):
     conn = create_connection()
     c = conn.cursor()
@@ -33,7 +32,14 @@ def update_saving(username, amount):
     conn.commit()
     conn.close()
 
-# Các hàm bổ trợ khác giữ nguyên logic của bạn
+# Hàm mới: Xóa mục tiêu cũ để bắt đầu lại (Kỹ năng Pro 6)
+def reset_user_goal(username):
+    conn = create_connection()
+    c = conn.cursor()
+    c.execute('DELETE FROM saving_records WHERE username = ?', (username,))
+    conn.commit()
+    conn.close()
+
 def add_user(username, password):
     conn = create_connection()
     c = conn.cursor()
@@ -63,12 +69,12 @@ def get_user_goal(username):
 def set_user_goal(username, goal, total):
     conn = create_connection()
     c = conn.cursor()
-    c.execute('INSERT INTO saving_records(username, goal_name, total_amount) VALUES (?,?,?)', (username, goal, total))
+    c.execute('INSERT INTO saving_records(username, goal_name, total_amount, saved_amount) VALUES (?,?,?,0)', (username, goal, total))
     conn.commit()
     conn.close()
 
 # ==========================================
-# PHẦN 2: GIAO DIỆN (Làm lại phần Dashboard điền tiền)
+# PHẦN 2: GIAO DIỆN STREAMLIT
 # ==========================================
 st.set_page_config(page_title="Saving Pro 6", page_icon="💰", layout="centered")
 create_tables()
@@ -79,39 +85,38 @@ if 'user_active' not in st.session_state: st.session_state['user_active'] = ""
 def auth_page():
     col_h1, col_h2 = st.columns([10, 2])
     with col_h1: st.markdown("<h2 style='color: green;'>E-BIKE - SAVING</h2>", unsafe_allow_html=True)
-    with col_h2: st.markdown("<b>Đăng nhập/Đăng ký</b>", unsafe_allow_html=True)
+    with col_h2: st.markdown("<b>Hệ thống</b>", unsafe_allow_html=True)
     st.markdown("---")
     auth_mode = st.tabs(["🔐 Đăng Nhập", "📝 Đăng Ký"])
-    
     with auth_mode[0]:
         u = st.text_input("Tài khoản", key="l_u")
         p = st.text_input("Mật khẩu", type="password", key="l_p")
-        if st.button("Đăng nhập"):
+        if st.button("Xác nhận Đăng nhập"):
             if login_user(u, p):
                 st.session_state['logged_in'], st.session_state['user_active'] = True, u
                 st.rerun()
-            else: st.error("Sai tài khoản!")
-            
+            else: st.error("Sai thông tin!")
     with auth_mode[1]:
         nu = st.text_input("Tài khoản mới", key="r_u")
         np = st.text_input("Mật khẩu mới", type="password", key="r_p")
         cp = st.text_input("Xác nhận mật khẩu", type="password", key="r_c")
-        if st.button("Đăng ký"):
-            if np == cp and add_user(nu, np): st.success("Xong! Qua tab Đăng nhập nhé.")
-            else: st.error("Lỗi đăng ký!")
+        if st.button("Tạo tài khoản"):
+            if nu and np == cp:
+                if add_user(nu, np): st.success("Đăng ký thành công!")
+                else: st.error("Tài khoản đã tồn tại!")
 
-# --- LÀM LẠI PHẦN DASHBOARD ĐIỀN TIỀN ---
 def main_dashboard():
     user = st.session_state['user_active']
     st.title(f"💰 100 NGÀY TIẾT KIỆM")
+    st.sidebar.markdown(f"👤 User: **{user}**")
     
     goal_data = get_user_goal(user)
 
     if not goal_data:
-        st.subheader("🎯 Thiết lập mục tiêu")
-        g = st.text_input("Bạn tiết kiệm để làm gì?")
-        t = st.number_input("Số tiền mục tiêu (VNĐ)", min_value=0, step=10000)
-        if st.button("Bắt đầu hành trình"):
+        st.subheader("🎯 Thiết lập mục tiêu mới")
+        g = st.text_input("Hôm nay bạn muốn tiết kiệm vì điều gì?")
+        t = st.number_input("Số tiền mục tiêu (VNĐ)", min_value=0, step=50000)
+        if st.button("🚀 Bắt đầu hành trình"):
             if g and t > 0:
                 set_user_goal(user, g, t)
                 st.balloons()
@@ -121,29 +126,40 @@ def main_dashboard():
         percent = min(int((saved / total) * 100), 100)
 
         # Hiển thị thông số
+        st.info(f"🚩 Mục tiêu: **{name}**")
         c1, c2 = st.columns(2)
-        c1.metric("Mục tiêu", name)
-        c2.metric("Đã tiết kiệm", f"{saved:,.0f} / {total:,.0f} VNĐ")
+        c1.metric("Tổng đích đến", f"{total:,.0f} VNĐ")
+        c2.metric("Số tiền hiện có", f"{saved:,.0f} VNĐ")
 
-        st.write(f"### Tiến độ: {percent}%")
+        st.write(f"### 📈 Tiến độ: {percent}%")
         st.progress(percent)
 
         st.divider()
 
-        # PHẦN ĐIỀN SỐ TIỀN TIẾT KIỆM (Mục tiêu chính)
-        st.subheader("💵 Nhập số tiền tiết kiệm hôm nay")
-        with st.container():
-            amount = st.number_input("Nhập số tiền (VNĐ):", min_value=1000, step=1000, key="add_money")
-            if st.button("Xác nhận gửi tiền vào quỹ"):
+        # KIỂM TRA NẾU ĐÃ HOÀN THÀNH (Tính năng mới thêm)
+        if percent >= 100:
+            st.success(f"🎊 CHÚC MỪNG! Bạn đã hoàn thành xuất sắc mục tiêu: {name}!")
+            st.balloons()
+            st.snow() # Hiệu ứng tuyết rơi cho thêm phần đặc biệt
+            
+            if st.button("🔄 TIẾT KIỆM MỤC TIÊU KHÁC"):
+                reset_user_goal(user) # Xóa mục tiêu cũ trong DB
+                st.rerun() # Quay lại màn hình thiết lập mục tiêu
+        else:
+            # Nếu chưa xong thì mới hiện phần điền tiền
+            st.subheader("💵 Cập nhật tiết kiệm hôm nay")
+            amount = st.number_input("Nhập số tiền vừa tiết kiệm thêm (VNĐ):", min_value=1000, step=1000, key="add_money")
+            if st.button("✅ Xác nhận gửi tiền"):
                 update_saving(user, amount)
-                st.success(f"Đã thêm {amount:,.0f} VNĐ! Cố gắng lên!")
-                st.balloons()
+                st.success(f"Đã thêm {amount:,.0f} VNĐ!")
                 st.rerun()
 
     if st.sidebar.button("Đăng xuất"):
         st.session_state['logged_in'] = False
         st.rerun()
 
-# Điều hướng chính
-if not st.session_state['logged_in']: auth_page()
-else: main_dashboard()
+# Điều hướng
+if not st.session_state['logged_in']:
+    auth_page()
+else:
+    main_dashboard()
