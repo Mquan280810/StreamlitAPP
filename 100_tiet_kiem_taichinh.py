@@ -188,6 +188,21 @@ def main_dashboard():
             st.progress(min(progress_percent, 100))
             st.write(f"{progress_percent}% hoàn thành")
 
+            # 3. PHẦN NHẬP SỐ TIỀN TIẾT KIỆM (Mới thêm)
+        st.subheader("📥 Cập nhật tiết kiệm hôm nay")
+        with st.form("saving_form"):
+            amount_input = st.number_input("Số tiền bạn vừa tiết kiệm được (VNĐ):", min_value=1000, step=1000)
+            submit_save = st.form_submit_state = st.form_submit_button("Xác nhận tiết kiệm")
+            
+            if submit_save:
+                if current_saved + amount_input > total_needed:
+                    st.warning("Số tiền này sẽ vượt quá mục tiêu! Chúc mừng bạn!")
+                
+                update_saved_amount(active_user, amount_input)
+                st.success(f"Đã cộng thêm {amount_input:,.0f} VNĐ vào quỹ!")
+                st.balloons()
+                st.rerun() # Load lại để cập nhật thanh tiến độ ngay lập tức
+
     # Nút Đăng xuất ở thanh bên
     if st.sidebar.button("Đăng xuất"):
         st.session_state['logged_in'] = False
