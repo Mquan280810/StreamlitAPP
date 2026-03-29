@@ -152,7 +152,6 @@ def main_dashboard():
             if st.button("✅ Xác nhận gửi tiền"):
                 update_saving(user, amount)
                 st.success(f"Đã thêm {amount:,.0f} VNĐ!")
-                st.moneys()
                 st.rerun()
 
     if st.sidebar.button("Đăng xuất"):
