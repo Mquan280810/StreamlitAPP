@@ -84,7 +84,7 @@ if 'user_active' not in st.session_state: st.session_state['user_active'] = ""
 
 def auth_page():
     col_h1, col_h2 = st.columns([10, 2])
-    with col_h1: st.markdown("<h2 style='color: green;'>E-BIKE - SAVING</h2>", unsafe_allow_html=True)
+    with col_h1: st.markdown("<h2 style='color: green;'>Finance - SAVING</h2>", unsafe_allow_html=True)
     with col_h2: st.markdown("<b>Hệ thống</b>", unsafe_allow_html=True)
     st.markdown("---")
     auth_mode = st.tabs(["🔐 Đăng Nhập", "📝 Đăng Ký"])
